@@ -1,7 +1,7 @@
 sendPacket.mote == 1 -> recvPacket.mote == 5 => Notify('Packet Success')
 
-subscribe send to sendPacket;
-subscribe recv to recvPacket;
+subscribe sendPacket to sendPacket;
+subscribe recvPacket to recvPacket;
 bool sent = False;
 behaviour{
 	if (getTopic() == 'sendPacket'){
