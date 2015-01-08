@@ -1,0 +1,19 @@
+presence.area == 'frontDoor' | presence.area == 'backDoor' -> door.status == 'opened' => Notify('Someone just entered home from', presence.area)
+
+subscribe presence to presence;
+subscribe door to door;
+String area;
+behavior{
+	if (getTopic() == 'presence') {
+		if (presence.area == 'frontDoor' || presence.area == 'backDoor') {
+			e1 = True;
+			area = presence.area;
+		}
+	}
+	else if (getTopic() == 'door') {
+		if (e1 && door.status == 'opened') {
+			send('Someone just entered home from', area);
+			e1 = False;
+		}
+	}
+}

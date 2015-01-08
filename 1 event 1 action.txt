@@ -1,0 +1,7 @@
+temp.val > 23 => Notify('Too Hot')
+
+subscribe temp to Temp;
+behavior{
+	if (temp.val > 23)
+		send('Too Hot');
+}
