@@ -1,0 +1,148 @@
+E1 => CA
+
+subscribe E1;
+event e1;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+	}
+	if (e1) {
+		conditionAction(e1);
+	}
+	e1 = NULL;
+}
+
+=====================================
+E1 OR E2 => CA
+
+subscribe E1, E2;
+event e1, e2;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+		case('E2'): e2 = E2;
+	}
+	if (e1) {
+		conditionAction(e1);
+	}
+	else if (e2){
+		conditionAction(e2);
+	}
+	e1 = e2 = NULL;
+}
+
+=====================================
+E1 AND E2 => CA
+
+subscribe E1, E2;
+event e1, e2;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+		case('E2'): e2 = E2;
+	}
+	if (e1 & e2) {
+		conditionAction(e1, e2);
+	}
+	e1 = e2 = NULL;
+}
+
+=====================================
+E1 -> E2 => CA
+
+subscribe E1, E2;
+event e1, e2;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+		case('E2'): if (e1) {e2 = E2;};
+	}
+	if (e2){
+		conditionAction(e1, e2);
+	}
+	e1 = e2 = NULL;
+}
+
+=====================================
+(E1 -> E2) ! E3 => CA
+
+subscribe E1, E2, E3;
+event e1, e2, e3;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+		case('E2'): if (e1) {e2 = E2;};
+		case('E3'): e1 = NULL;
+	}
+	if (e2){
+		conditionAction(e1, e2);
+	}
+	e1 = e2 = NULL;
+}
+=====================================
+(E1 OR E2) AND E3
+
+subscribe E1, E2, E3;
+event e1, e2, e3;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+		case('E2'): e2 = E2;
+		case('E3'): e3 = E3;
+	}
+	if ((e1 || e2) & e3) {
+		conditionAction(e1, e2, e3);
+	} # ISSUE WITH PAIRING #
+	e1 = e2 = e3 = NULL;
+}
+=====================================
+(E1 -> E2) AND E3
+
+subscribe E1, E2, E3;
+event e1, e2, e3;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+		case('E2'): if (e1) {e2 = E2;};
+		case('E3'): e3 = E3;
+	}
+	if (e2 & e3) {
+		conditionAction(e1, e2, e3);
+	}
+	e1 = e2 = e3 = NULL;
+}
+=====================================
+(E1 AND E2) -> E3
+
+subscribe E1, E2, E3;
+event e1, e2, e3;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+		case('E2'): e2 = E2;
+		case('E3'): if (e1 & e2) {e3 = E3;};
+	}
+	if (e3) {
+		conditionAction(e1, e2, e3);
+	}
+	e1 = e2 = e3 = NULL;
+}
+
+=====================================
+(E1 AND E2) -> (E3 OR E4)
+
+subscribe E1, E2, E3, E4;
+event e1, e2, e3, e4;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1;
+		case('E2'): e2 = E2;
+		case('E3'): if (e1 & e2) {e3 = E3;};
+		case('E4'): if (e1 & e2) {e4 = E4;};
+	}
+	if (e3 || e4) {
+		conditionAction(e1, e2, e3, e4);
+	}
+	e1 = e2 = e3 = e4 = NULL;
+}
+=====================================
