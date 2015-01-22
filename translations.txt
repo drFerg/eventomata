@@ -8,8 +8,8 @@ behavior{
 	}
 	if (e1) {
 		conditionAction(e1);
+		e1 = NULL;
 	}
-	e1 = NULL;
 }
 
 =====================================
@@ -22,13 +22,10 @@ behavior{
 		case('E1'): e1 = E1;
 		case('E2'): e2 = E2;
 	}
-	if (e1) {
-		conditionAction(e1);
+	if (e1 || e2) {
+		conditionAction(e1, e2);
+		e1 = e2 = NULL;
 	}
-	else if (e2){
-		conditionAction(e2);
-	}
-	e1 = e2 = NULL;
 }
 
 =====================================
@@ -43,8 +40,60 @@ behavior{
 	}
 	if (e1 & e2) {
 		conditionAction(e1, e2);
+		e1 = e2 = NULL;
 	}
-	e1 = e2 = NULL;
+}
+
+=====================================
+E1+ AND E2+ => CA
+
+subscribe E1, E2;
+event e1[], e2[];
+behavior{
+	switch(gettopic()){
+		case('E1'): e1.append(E1);
+		case('E2'): e2.append(E2);
+	}
+	if (e1.notEmpty() & e2.notEmpty()) {
+		conditionAction(e1, e2);
+		e1.clear();
+		e2.clear();
+	}
+}
+
+=====================================
+E1[0] AND E2[0] => CA
+
+subscribe E1, E2;
+event e1, e2;
+behavior{
+	switch(gettopic()){
+		case('E1'): if (e1 == NULL) e1 = E1;
+		case('E2'): if (e2 == NULL) e2 = E2;
+	}
+	if (e1.notEmpty() & e2.notEmpty()) {
+		conditionAction(e1, e2);
+		e1.clear();
+		e2.clear();
+	}
+}
+
+=====================================
+E1[0] AND E2[0] => CA #unsubscribe#
+
+subscribe E1, E2;
+event e1, e2;
+behavior{
+	switch(gettopic()){
+		case('E1'): e1 = E1; unsubscribe E1;
+		case('E2'): e2 = E2; unsubscribe E2;
+	}
+	if (e1.notEmpty() & e2.notEmpty()) {
+		conditionAction(e1, e2);
+		e1.clear();
+		e2.clear();
+		subscribe E1, E2;
+	}
 }
 
 =====================================
@@ -59,8 +108,8 @@ behavior{
 	}
 	if (e2){
 		conditionAction(e1, e2);
+		e1 = e2 = NULL;
 	}
-	e1 = e2 = NULL;
 }
 
 =====================================
@@ -76,8 +125,8 @@ behavior{
 	}
 	if (e2){
 		conditionAction(e1, e2);
+		e1 = e2 = NULL;
 	}
-	e1 = e2 = NULL;
 }
 =====================================
 (E1 OR E2) AND E3
@@ -92,8 +141,8 @@ behavior{
 	}
 	if ((e1 || e2) & e3) {
 		conditionAction(e1, e2, e3);
+		e1 = e2 = e3 = NULL;
 	} # ISSUE WITH PAIRING #
-	e1 = e2 = e3 = NULL;
 }
 =====================================
 (E1 -> E2) AND E3
@@ -108,8 +157,8 @@ behavior{
 	}
 	if (e2 & e3) {
 		conditionAction(e1, e2, e3);
+		e1 = e2 = e3 = NULL;
 	}
-	e1 = e2 = e3 = NULL;
 }
 =====================================
 (E1 AND E2) -> E3
@@ -124,8 +173,8 @@ behavior{
 	}
 	if (e3) {
 		conditionAction(e1, e2, e3);
+		e1 = e2 = e3 = NULL;
 	}
-	e1 = e2 = e3 = NULL;
 }
 
 =====================================
@@ -142,7 +191,7 @@ behavior{
 	}
 	if (e3 || e4) {
 		conditionAction(e1, e2, e3, e4);
+		e1 = e2 = e3 = e4 = NULL;
 	}
-	e1 = e2 = e3 = e4 = NULL;
 }
 =====================================
