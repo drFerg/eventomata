@@ -129,7 +129,7 @@ behavior{
 	}
 }
 =====================================
-(E1 OR E2) AND E3
+(E1 OR E2) AND E3 => CA
 
 subscribe E1, E2, E3;
 event e1, e2, e3;
@@ -142,10 +142,10 @@ behavior{
 	if ((e1 || e2) & e3) {
 		conditionAction(e1, e2, e3);
 		e1 = e2 = e3 = NULL;
-	} # ISSUE WITH PAIRING #
+	}
 }
 =====================================
-(E1 -> E2) AND E3
+(E1 -> E2) AND E3 => CA
 
 subscribe E1, E2, E3;
 event e1, e2, e3;
@@ -161,7 +161,7 @@ behavior{
 	}
 }
 =====================================
-(E1 AND E2) -> E3
+(E1 AND E2) -> E3 => CA
 
 subscribe E1, E2, E3;
 event e1, e2, e3;
@@ -178,7 +178,7 @@ behavior{
 }
 
 =====================================
-(E1 AND E2) -> (E3 OR E4)
+(E1 AND E2) -> (E3 OR E4) => CA
 
 subscribe E1, E2, E3, E4;
 event e1, e2, e3, e4;
@@ -195,3 +195,18 @@ behavior{
 	}
 }
 =====================================
+x:E1 -> y:E1 => CA
+
+subscribe E1;
+event x, y;
+behavior{
+	switch(gettopic()){
+		case('E1'): if (x == NULL) x = E1;
+					else y = E1;
+	}
+	if (y){
+		conditionAction(x, y);
+		x = y; 
+		y = NULL;
+	}
+}
